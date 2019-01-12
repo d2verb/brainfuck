@@ -1,4 +1,5 @@
 import os
+import ir
 
 let
   code = if paramCount() > 0: readFile paramStr(1) else: readAll stdin
