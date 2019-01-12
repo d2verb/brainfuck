@@ -7,18 +7,43 @@ type
     irIn,
     irOut,
     irOpen,
-    irClose
+    irClose,
+    irZeroClear,
+    irMovLeft,
+    irMovRight,
 
   IRNode* = ref object
     case kind*: IRKind
     of irAdd, irSub:
       val*: uint8
-    of irLeft, irRight:
+    of irLeft, irRight, irMovLeft, irMovRight:
       off*: int
     of irOpen, irClose:
       pos*: int
     else: discard
 
+proc updateJumpTarget*(irs: seq[IRNode]) =
+  for startPos in 0..<irs.len:
+    if irs[startPos].kind != irOpen:
+      continue
+
+    var
+      nesting = 1
+      stopPos = startPos + 1
+
+    while stopPos < irs.len:
+      case irs[stopPos].kind
+      of irOpen: inc nesting
+      of irClose: dec nesting
+      else: discard
+
+      if nesting == 0:
+        break
+
+      inc stopPos
+
+    irs[startPos].pos = stopPos
+    irs[stopPos].pos = startPos
 
 proc genIR*(code: string): seq[IRNode] =
   var prevCode = '\0'
@@ -53,25 +78,4 @@ proc genIR*(code: string): seq[IRNode] =
     else: discard
     prevCode = c
 
-  # fill out jump target
-  for startPos in 0..<result.len:
-    if result[startPos].kind != irOpen:
-      continue
-
-    var
-      nesting = 1
-      stopPos = startPos + 1
-
-    while stopPos < result.len:
-      case result[stopPos].kind
-      of irOpen: inc nesting
-      of irClose: dec nesting
-      else: discard
-
-      if nesting < 0:
-        break
-
-      inc stopPos
-
-    result[startPos].pos = stopPos
-    result[stopPos].pos = startPos
+  result.updateJumpTarget
