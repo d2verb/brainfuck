@@ -28,6 +28,7 @@ proc optimizeZeroClear*(irs: seq[IRNode]): seq[IRNode] =
 
   result.updateJumpTarget
 
+# FIXME: Broken! Don't use me.
 proc optimizeMoveDataToLeft*(irs: seq[IRNode]): seq[IRNode] =
   var irPos = 0
 
@@ -56,6 +57,7 @@ proc optimizeMoveDataToLeft*(irs: seq[IRNode]): seq[IRNode] =
 
   result.updateJumpTarget
 
+# FIXME: Broken! Don't use me.
 proc optimizeMoveDataToRight*(irs: seq[IRNode]): seq[IRNode] =
   var irPos = 0
 

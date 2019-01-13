@@ -111,4 +111,4 @@ proc interpret*(code: string, jit: bool) =
   if jit:
     code.runJIT
   else:
-    code.genIR.optimizeZeroClear.optimizeMoveDataToLeft.optimizeMoveDataToRight.run
+    code.genIR.optimizeZeroClear.run
